@@ -45,7 +45,7 @@ app.get("/games", (req, res) => {
  * Endpoint que lista um game por id
  */
 app.get("/game/:id", (req, res) => {
-  var id = req.params.id;
+  var id = parseInt(req.params.id);
 
   if (isNaN(id)) {
     // verifica se o id é um número
@@ -63,6 +63,26 @@ app.get("/game/:id", (req, res) => {
     } else {
       res.sendStatus(404);
     }
+  }
+});
+
+/**
+ * Endpoint que cria um game
+ */
+app.post("/game", (req, res) => {
+  var { title, year, price } = req.body;
+
+  if (title == undefined || title == "" || isNaN(year) || isNaN(price)) {
+    res.sendStatus(400);
+  } else {
+    db.games.push({
+      id: 123,
+      title,
+      year,
+      price,
+    });
+
+    res.sendStatus(200);
   }
 });
 
