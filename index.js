@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 // DB fake
 // TODO => Criar database para os games
-var db = {
+var DB = {
   games: [
     {
       id: 1,
@@ -38,7 +38,7 @@ var db = {
 app.get("/games", (req, res) => {
   res.statusCode = 200; // sempre passar status code para o usuário
 
-  res.json(db.games);
+  res.json(DB.games);
 });
 
 /**
@@ -55,7 +55,7 @@ app.get("/game/:id", (req, res) => {
     // res.sendStatus(200);
     res.status(200);
     // res.send("Isso é um número");
-    var game = db.games.find((g) => g.id == id);
+    var game = DB.games.find((g) => g.id == id);
 
     if (game != undefined) {
       res.statusCode = 200;
@@ -75,7 +75,7 @@ app.post("/game", (req, res) => {
   if (title == undefined || title == "" || isNaN(year) || isNaN(price)) {
     res.sendStatus(400);
   } else {
-    db.games.push({
+    DB.games.push({
       id: 123,
       title,
       year,
@@ -95,13 +95,46 @@ app.delete("/game/:id", (req, res) => {
   if (isNaN(id)) {
     res.sendStatus(400);
   } else {
-    var index = db.games.findIndex((g) => g.id == id);
+    var index = DB.games.findIndex((g) => g.id == id);
 
     if (index == -1) {
       res.sendStatus(404);
     } else {
-      db.games.splice(index, 1);
+      DB.games.splice(index, 1);
       res.sendStatus(200);
+    }
+  }
+});
+
+/**
+ * Endpoint que edita/atualiza um game
+ */
+app.put("/game/:id", (req, res) => {
+  var id = parseInt(req.params.id);
+
+  if (isNaN(id)) {
+    res.sendStatus(400);
+  } else {
+    var game = DB.games.find((g) => g.id == id);
+
+    if (game != undefined) {
+      var { title, year, price } = req.body;
+
+      if (title != undefined) {
+        game.title = title;
+        console.log("Título atualizado com sucesso!");
+      }
+      if (price != undefined) {
+        game.price = price;
+        console.log("Preço atualizado com sucesso!");
+      }
+      if (year != undefined) {
+        game.year = year;
+        console.log("Ano atualizado com sucesso!");
+      }
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
     }
   }
 });
