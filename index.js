@@ -32,7 +32,39 @@ var db = {
   ],
 };
 
-app.get("/", (req, res) => {});
+/**
+ * Endpoint que lista todos os games
+ */
+app.get("/games", (req, res) => {
+  res.statusCode = 200; // sempre passar status code para o usuário
+
+  res.json(db.games);
+});
+
+/**
+ * Endpoint que lista um game por id
+ */
+app.get("/game/:id", (req, res) => {
+  var id = req.params.id;
+
+  if (isNaN(id)) {
+    // verifica se o id é um número
+    res.sendStatus(400); // por default ele usa o status 200 ok
+    // res.send("Isso não é um ID válido! Tente novamente com número(s).");
+  } else {
+    // res.sendStatus(200);
+    res.status(200);
+    // res.send("Isso é um número");
+    var game = db.games.find((g) => g.id == id);
+
+    if (game != undefined) {
+      res.statusCode = 200;
+      res.send(game);
+    } else {
+      res.sendStatus(404);
+    }
+  }
+});
 
 app.listen(port, (error) => {
   if (error) {
