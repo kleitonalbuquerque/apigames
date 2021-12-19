@@ -25,6 +25,15 @@
   <script>
     // console.log("Axios instalado", axios);
 
+    /**
+     * Delete Game
+     */
+    function deleteGame(listItem) {
+      // console.log(listItem);
+      var id = listItem.getAttribute("data-id");
+      console.log(id);
+    }
+
     // Retorna todos os games
     axios
       .get("http://localhost:4000/games")
@@ -42,6 +51,15 @@
           item.setAttribute("data-price", game.price);
 
           item.innerHTML = game.id + " - " + game.title + " - R$ " + game.price;
+
+          var deleteBtn = document.createElement("button");
+          deleteBtn.innerHTML = "Delete";
+          deleteBtn.addEventListener("click", function () {
+            deleteGame(item);
+          });
+
+          item.appendChild(deleteBtn);
+
           list.appendChild(item);
         });
 
