@@ -33,6 +33,20 @@ var DB = {
       price: 50,
     },
   ],
+  users: [
+    {
+      id: 1,
+      name: "Mariana",
+      email: "mariana@mail.com",
+      password: "nodejs<3",
+    },
+    {
+      id: 2,
+      name: "Kleiton",
+      email: "kleiton@mail.com",
+      password: "mariana<3",
+    },
+  ],
 };
 
 /**
@@ -139,6 +153,33 @@ app.put("/game/:id", (req, res) => {
     } else {
       res.sendStatus(404);
     }
+  }
+});
+
+/**
+ * Endpoint de login
+ */
+app.post("/auth", (req, res) => {
+  var { email, password } = req.body;
+
+  if (email != undefined) {
+    var user = DB.users.find((u) => u.email == email);
+
+    if (user != undefined) {
+      if (user.password == password) {
+        res.status = 200;
+        res.json({ token: "TOKEN FALSO!" });
+      } else {
+        res.status = 401;
+        res.json({ err: "Credenciais inválidas!" });
+      }
+    } else {
+      res.status = 404;
+      res.json({ err: "E-mail enviado não existe!" });
+    }
+  } else {
+    res.status = 400;
+    res.json({ err: "E-mail enviado é inválido!" });
   }
 });
 
