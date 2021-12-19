@@ -167,18 +167,18 @@ app.post("/auth", (req, res) => {
 
     if (user != undefined) {
       if (user.password == password) {
-        res.status = 200;
+        res.status(200);
         res.json({ token: "TOKEN FALSO!" });
       } else {
-        res.status = 401;
+        res.status(401);
         res.json({ err: "Credenciais inválidas!" });
       }
     } else {
-      res.status = 404;
+      res.status(404);
       res.json({ err: "E-mail enviado não existe!" });
     }
   } else {
-    res.status = 400;
+    res.status(400);
     res.json({ err: "E-mail enviado é inválido!" });
   }
 });
