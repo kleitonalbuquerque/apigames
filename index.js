@@ -13,6 +13,35 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// middleware as rotas da aplicação
+function auth(req, res, next) {
+  const authToken = req.headers["authorization"];
+
+  if (authToken != undefined) {
+    const bearer = authToken.split(" ");
+    var token = bearer[1]; // pega a segunda parte do array que é o token
+
+    jwt.verify(token, JWTSecret, (err, data) => {
+      if (err) {
+        res.status(401);
+        res.json({ err: "Token inválido!" });
+      } else {
+        req.token = token;
+        req.loggedUser = { id: data.id, email: data.email };
+        req.empresa = "KLMTech";
+
+        console.log(data);
+        next(); // só chega na rota se estiver autenticado
+      }
+    });
+    // console.log(bearer);
+  } else {
+    res.status(401);
+    res.json({ err: "Token inválido!" });
+  }
+  // console.log(authToken);
+}
+
 // DB fake
 // TODO => Criar database para os games
 var DB = {
@@ -54,17 +83,20 @@ var DB = {
 
 /**
  * Endpoint que lista todos os games
+ * Rota protegida por autenticação (auth)
  */
-app.get("/games", (req, res) => {
+app.get("/games", auth, (req, res) => {
   res.statusCode = 200; // sempre passar status code para o usuário
-
-  res.json(DB.games);
+  /**
+   * Retorna as variáveis que estão dentro do token. Ex: req.empresa = "KLMTech"
+   */
+  res.json({ empresa: req.empresa, user: req.loggedUser, game: DB.games });
 });
 
 /**
  * Endpoint que lista um game por id
  */
-app.get("/game/:id", (req, res) => {
+app.get("/game/:id", auth, (req, res) => {
   var id = parseInt(req.params.id);
 
   if (isNaN(id)) {
@@ -89,7 +121,7 @@ app.get("/game/:id", (req, res) => {
 /**
  * Endpoint que cria um game
  */
-app.post("/game", (req, res) => {
+app.post("/game", auth, (req, res) => {
   var { title, year, price } = req.body;
 
   if (title == undefined || title == "" || isNaN(year) || isNaN(price)) {
@@ -109,7 +141,7 @@ app.post("/game", (req, res) => {
 /**
  * Endpoint que exclui um game
  */
-app.delete("/game/:id", (req, res) => {
+app.delete("/game/:id", auth, (req, res) => {
   var id = req.params.id;
 
   if (isNaN(id)) {
@@ -129,7 +161,7 @@ app.delete("/game/:id", (req, res) => {
 /**
  * Endpoint que edita/atualiza um game
  */
-app.put("/game/:id", (req, res) => {
+app.put("/game/:id", auth, (req, res) => {
   var id = parseInt(req.params.id);
 
   if (isNaN(id)) {
