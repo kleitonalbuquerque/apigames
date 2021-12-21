@@ -9,7 +9,6 @@ const port = 4000;
 const JWTSecret = "adsfsadfsadfasdjflkasdhfjlhsudfhushuifghkisfhbkjadshjkasd";
 
 app.use(cors());
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -19,16 +18,19 @@ function auth(req, res, next) {
 
   if (authToken != undefined) {
     const bearer = authToken.split(" ");
+    console.log(bearer);
     var token = bearer[1]; // pega a segunda parte do array que é o token
+    console.log(token);
 
     jwt.verify(token, JWTSecret, (err, data) => {
       if (err) {
+        console.log(token);
         res.status(401);
         res.json({ err: "Token inválido!" });
       } else {
         req.token = token;
         req.loggedUser = { id: data.id, email: data.email };
-        req.empresa = "KLMTech";
+        // req.empresa = "KLMTech";
 
         console.log(data);
         next(); // só chega na rota se estiver autenticado
@@ -90,7 +92,8 @@ app.get("/games", auth, (req, res) => {
   /**
    * Retorna as variáveis que estão dentro do token. Ex: req.empresa = "KLMTech"
    */
-  res.json({ empresa: req.empresa, user: req.loggedUser, game: DB.games });
+  //  res.json({ empresa: req.empresa, user: req.loggedUser, game: DB.games });
+  res.json({ game: DB.games });
 });
 
 /**

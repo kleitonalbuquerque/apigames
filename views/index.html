@@ -32,7 +32,18 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     /**
-     * Crate Game
+     * Auth
+     */
+    var axiosConfig = {
+      headers: {
+        Authorization:
+          "Bearer " +
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJpYW5hQG1haWwuY29tIiwiaWF0IjoxNjQwMTE2NTEwLCJleHAiOjE2NDAyODkzMTB9.VozpaRxQv9b7uv1P0kwwIteNWOaE_ksvgh_eQ0ZRKKU",
+      },
+    };
+
+    /**
+     * Create Game
      */
     function createGame() {
       var titleInput = document.getElementById("title");
@@ -119,12 +130,13 @@
      * Return all Games
      */
     axios
-      .get("http://localhost:4000/games")
+      .get("http://localhost:4000/games", axiosConfig)
       .then((response) => {
         var games = response.data;
         var list = document.getElementById("games");
 
-        games.forEach((game) => {
+        Array.prototype.forEach.call(games.game, (game) => {
+          console.log(game);
           var item = document.createElement("li");
           // console.log(item);
 
