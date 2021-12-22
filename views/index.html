@@ -4,10 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Loja de games</title>
+
+    <h4>Login</h4>
+    <input type="text" name="email" id="email" placeholder="your@email.com" />
+    <input
+      type="password"
+      name="password"
+      id="password"
+      placeholder="********"
+    />
+    <button onclick="login()">Entrar</button>
+    <br />
+
     <hr />
     <h4>Lista de games</h4>
     <ul id="games"></ul>
     <hr />
+
     <h4>Novo game</h4>
     <input type="text" name="title" id="title" placeholder="Título" />
     <br />
@@ -17,6 +30,7 @@
     <br />
     <button type="button" onclick="createGame()">Criar</button>
     <hr />
+
     <h4>Editar game</h4>
     <input type="text" name="idEdit" id="idEdit" placeholder="ID" readonly />
     <br />
@@ -31,6 +45,33 @@
   <body></body>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
+    /**
+     * Login
+     */
+    function login() {
+      var emailInput = document.getElementById("email");
+      var passwordInput = document.getElementById("password");
+
+      var email = emailInput.value;
+      var password = passwordInput.value;
+
+      axios
+        .post("http://localhost:4000/auth", {
+          email,
+          password,
+        })
+        .then((res) => {
+          var token = res.data.token;
+          alert("Logado!");
+          // console.log(token);
+          // console.log("Logado!");
+          // console.log(res.data);
+        })
+        .catch((err) => {
+          console.log("Login incorreto!");
+        });
+    }
+
     /**
      * Auth
      */
