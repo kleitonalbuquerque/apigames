@@ -46,6 +46,15 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     /**
+     * Auth
+     */
+    var axiosConfig = {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    };
+
+    /**
      * Login
      */
     function login() {
@@ -62,7 +71,10 @@
         })
         .then((res) => {
           var token = res.data.token;
-          alert("Logado!");
+          localStorage.setItem("token", token); // armazena o token do usuário no navegador
+          axiosConfig.headers.Authorization =
+            "Bearer" + localStorage.get("token");
+          // alert("Logado!");
           // console.log(token);
           // console.log("Logado!");
           // console.log(res.data);
@@ -70,18 +82,10 @@
         .catch((err) => {
           console.log("Login incorreto!");
         });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     }
-
-    /**
-     * Auth
-     */
-    var axiosConfig = {
-      headers: {
-        Authorization:
-          "Bearer " +
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtYXJpYW5hQG1haWwuY29tIiwiaWF0IjoxNjQwMTE2NTEwLCJleHAiOjE2NDAyODkzMTB9.VozpaRxQv9b7uv1P0kwwIteNWOaE_ksvgh_eQ0ZRKKU",
-      },
-    };
 
     /**
      * Create Game
@@ -98,7 +102,7 @@
       };
 
       axios
-        .post("http://localhost:4000/game", game)
+        .post("http://localhost:4000/game", game, axiosConfig)
         .then((response) => {
           if (response.status == 200) {
             alert("Game cadastrado: " + game.title);
@@ -116,7 +120,7 @@
     function deleteGame(listItem) {
       var id = listItem.getAttribute("data-id");
       axios
-        .delete("http://localhost:4000/game/" + id)
+        .delete("http://localhost:4000/game/" + id, axiosConfig)
         .then((response) => {
           alert("Game deletado!");
           window.location.reload();
@@ -155,7 +159,7 @@
       var id = idInput.value;
 
       axios
-        .put("http://localhost:4000/game/" + id, game)
+        .put("http://localhost:4000/game/" + id, game, axiosConfig)
         .then((response) => {
           if (response.status == 200) {
             alert("Game atualizado!!");
