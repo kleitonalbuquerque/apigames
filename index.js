@@ -86,12 +86,30 @@ var DB = {
  * Rota protegida por autenticação (auth)
  */
 app.get("/games", auth, (req, res) => {
+  var HATEOAS = [
+    {
+      href: "http://localhost:4000/games",
+      method: "GET",
+      rel: "get_games",
+    },
+    {
+      href: "http://localhost:4000/game/103",
+      method: "DELETE",
+      rel: "delete_game",
+    },
+    {
+      href: "http://localhost:4000/auth",
+      method: "POST",
+      rel: "login",
+    },
+  ];
+
   res.statusCode = 200; // sempre passar status code para o usuário
   /**
    * Retorna as variáveis que estão dentro do token. Ex: req.empresa = "KLMTech"
    */
   //  res.json({ empresa: req.empresa, user: req.loggedUser, game: DB.games });
-  res.json({ game: DB.games });
+  res.json({ game: DB.games, _links: HATEOAS });
 });
 
 /**
@@ -107,12 +125,36 @@ app.get("/game/:id", auth, (req, res) => {
   } else {
     // res.sendStatus(200);
     res.status(200);
+
+    var HATEOAS = [
+      {
+        href: "http://localhost:4000/game/" + id,
+        method: "GET",
+        rel: "get_game",
+      },
+      {
+        href: "http://localhost:4000/game/" + id,
+        method: "DELETE",
+        rel: "delete_game",
+      },
+      {
+        href: "http://localhost:4000/game/" + id,
+        method: "PUT",
+        rel: "edit_game",
+      },
+      {
+        href: "http://localhost:4000/games",
+        method: "POST",
+        rel: "get_games",
+      },
+    ];
+
     // res.send("Isso é um número");
     var game = DB.games.find((g) => g.id == id);
 
     if (game != undefined) {
       res.statusCode = 200;
-      res.send(game);
+      res.send({ game, _links: HATEOAS });
     } else {
       res.sendStatus(404);
     }
